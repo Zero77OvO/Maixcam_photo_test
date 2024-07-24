@@ -3,7 +3,7 @@ from maix.network import wifi #导入WIFI模块
 from maix import app, uart
 import sys
 from Usart import Usart1
-from UI import UI
+from UI import UI,blobs_mode
 
 
 
@@ -84,10 +84,10 @@ def find_blobs():
     
     
     # img=img.lens_corr(strength = 1.8,  zoom = 1.0,  x_corr = 0.0, y_corr = 0.0)
-    
-    blobs = img.find_blobs(thresholds, invert, roi, x_stride, y_stride, area_threshold, pixels_threshold, merge, margin, x_hist_bins_max, y_hist_bins_max)
-    
-    blobs = img.find_blobs(white_thresholds, invert, x_stride, y_stride, area_threshold, pixels_threshold, merge, margin, x_hist_bins_max, y_hist_bins_max)
+    if blobs_mode:
+        blobs = img.find_blobs(thresholds, invert, roi, x_stride, y_stride, area_threshold, pixels_threshold, merge, margin, x_hist_bins_max, y_hist_bins_max)
+    else:
+        blobs = img.find_blobs(white_thresholds, invert, x_stride, y_stride, area_threshold, pixels_threshold, merge, margin, x_hist_bins_max, y_hist_bins_max)
     
     ui1.UI1(img)
     ui1.parameter_ui(ui1.Lmin,ui1.Lmax,ui1.Amin,ui1.Amax,ui1.Bmin,ui1.Bmax,ts,img,dis)
