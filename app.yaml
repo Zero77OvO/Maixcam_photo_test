@@ -1,0 +1,12 @@
+files:
+  - 123 (2).py
+  - Find_num.py
+  - main.py
+  - UI.py
+  - Usart.py
+id: a452
+name: 电赛G题
+version: 1.0.0
+author: 我
+icon: app.png
+desc: g
