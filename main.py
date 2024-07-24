@@ -11,6 +11,8 @@ ts = touchscreen.TouchScreen()
 
 ui1=UI()
 
+detector = nn.YOLOv5(model="/root/models/yolov5s_num1.mud")
+
 # cam = camera.Camera(320, 240, image.Format.FMT_GRAYSCALE)
 cam =camera.Camera(320, 240)
 dis = display.Display()
@@ -77,11 +79,29 @@ def read_and_correct_image(cam, strength=1.8, zoom=1.0, x_corr=0.0, y_corr=0.0):
 
 
 def find_blobs():
-    t = time.time_ms()
+    # t = time.time_ms()
     img = cam.read()
     parameter = ui1.Lmin, ui1.Lmax, ui1.Amin, ui1.Amax, ui1.Bmin, ui1.Bmax,ui1.odd
     thresholds = [[ui1.Lmin, ui1.Lmax, ui1.Amin, ui1.Amax, ui1.Bmin, ui1.Bmax]]
     
+    #####################AI_recognize#######################
+    
+    objs = detector.detect(img, conf_th = 0.5, iou_th = 0.45)
+    for obj in objs:
+        img.draw_rect(obj.x, obj.y, obj.w, obj.h, color = image.COLOR_RED)
+        msg = f'{detector.labels[obj.class_id]}: {obj.score:.2f}'
+        img.draw_string(obj.x, obj.y, msg, color = image.COLOR_RED)
+        
+        # data = bytearray([0xF3,0xF4,int((obj.x+obj.w)/2),int((obj.y+obj.h)/2),obj.class_id,0xF5])
+        # Usart1.write_str(data)
+        print("x:{},y:{}, data: {}".format(int((obj.x+obj.w)/2), int((obj.y+obj.h)/2), obj.class_id))
+        
+        data1 = bytearray([0x4B,0x4C,obj.class_id,int((obj.x+obj.w)/2),int((obj.y+obj.h)/2),0x45])
+        Usart1.serial.write_str(data1)
+        # fps="fps: "+str(int(1000 / (time.time_ms() - t)))
+        # img.draw_string(0,200,fps,color = image.COLOR_RED, scale=2)
+        
+    #####################AI_recognize#######################
     
     # img=img.lens_corr(strength = 1.8,  zoom = 1.0,  x_corr = 0.0, y_corr = 0.0)
     if blobs_mode:
